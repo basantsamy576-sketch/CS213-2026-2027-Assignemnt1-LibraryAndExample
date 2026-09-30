@@ -1,44 +1,62 @@
 #include <iostream>
+#include <string>
 #include "Image_Class.h"
 
 using namespace std;
 
-void blackwhite(Image& image) {
-    for (int i = 0; i < image.width; ++i) {
-        for (int j = 0; j < image.height; ++j) {
-            int red = image(i, j, 0);
-            int green = image(i, j, 1);
-            int blue = image(i, j, 2);
-            
-            int gray = (red + green + blue) / 3;
-            
-            int finalColor;
-            if (gray > 127) {
-                finalColor = 255; 
-            } else {
-                finalColor = 0;   
+void rotateImage(Image& image) {
+    int choice;
+    cout << "Enter rotation degree (90, 180, 270): ";
+    cin >> choice;
+
+    if (choice == 90) {
+        Image rotated(image.height, image.width);
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < 3; ++k) {
+                    rotated(j, image.width - 1 - i, k) = image(i, j, k);
+                }
             }
-            
-            image(i, j, 0) = finalColor;
-            image(i, j, 1) = finalColor;
-            image(i, j, 2) = finalColor;
         }
+        image = rotated; 
+    } 
+    else if (choice == 180) {
+        Image rotated(image.width, image.height);
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < 3; ++k) {
+                    rotated(image.width - 1 - i, image.height - 1 - j, k) = image(i, j, k);
+                }
+            }
+        }
+        image = rotated;
+    } 
+    else if (choice == 270) {
+        Image rotated(image.height, image.width);
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < 3; ++k) {
+                    rotated(image.height - 1 - j, i, k) = image(i, j, k);
+                }
+            }
+        }
+        image = rotated;
+    } 
+    else {
+        cout << "Invalid choice! No rotation applied." << endl;
     }
 }
 
 int main() {
-    string inputFileName = "luffy.jpg"; 
-    string outputFileName = "luffy_out.jpg";
+    string inputFilename = "luffy.jpg";
+    string outputFilename = "luffy_out.jpg";
 
-    cout << "Loading image..." << endl;
-    
-    Image myImage(inputFileName);
-    
-    blackwhite(myImage);
-    
-    myImage.saveImage(outputFileName);
-    
-    cout << "Filter applied successfully! Output saved as: " << outputFileName << endl;
-    
+    Image myImage(inputFilename);
+
+    rotateImage(myImage);
+
+    myImage.saveImage(outputFilename);
+
+    cout << "Image rotated and saved successfully!" << endl;
     return 0;
 }
